@@ -1,114 +1,51 @@
 <template>
   <div class="calculator-app">
-    <div class="calc-display">
-      <div class="calc-expression">{{ expression || '0' }}</div>
-      <div class="calc-result">{{ result }}</div>
-    </div>
-    <div class="calc-grid">
+    <!-- Mode Switcher -->
+    <div class="calc-mode-switcher">
       <button
-        v-for="btn in buttons"
-        :key="btn.label"
-        class="calc-btn"
-        :class="[
-          btn.type === 'operator' && 'calc-btn-op',
-          btn.type === 'equals' && 'calc-btn-eq',
-          btn.type === 'clear' && 'calc-btn-clear',
-          btn.type === 'special' && 'calc-btn-special',
-        ]"
-        @click="handleBtn(btn)"
+        v-for="mode in modes"
+        :key="mode.id"
+        class="mode-chip"
+        :class="{ active: currentMode === mode.id }"
+        @click="currentMode = mode.id"
       >
-        {{ btn.label }}
+        <span class="mode-icon">{{ mode.icon }}</span>
+        <span class="mode-label mobile-hidden">{{ mode.label }}</span>
       </button>
     </div>
+
+    <!-- Basic Calculator -->
+    <BasicCalc v-if="currentMode === 'basic'" />
+    <CurrencyConverter v-else-if="currentMode === 'currency'" />
+    <UnitConverter v-else-if="currentMode === 'unit'" />
+    <BaseConverter v-else-if="currentMode === 'base'" />
+    <LoanCalculator v-else-if="currentMode === 'loan'" />
+    <AgeCalculator v-else-if="currentMode === 'age'" />
+    <DateCalculator v-else-if="currentMode === 'date'" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
+import BasicCalc from './modes/BasicCalc.vue'
+import CurrencyConverter from './modes/CurrencyConverter.vue'
+import UnitConverter from './modes/UnitConverter.vue'
+import BaseConverter from './modes/BaseConverter.vue'
+import LoanCalculator from './modes/LoanCalculator.vue'
+import AgeCalculator from './modes/AgeCalculator.vue'
+import DateCalculator from './modes/DateCalculator.vue'
 
-const expression = ref('')
-const currentInput = ref('')
-const lastResult = ref('')
-
-interface CalcBtn {
-  label: string
-  type: 'number' | 'operator' | 'equals' | 'clear' | 'special'
-  value: string
-}
-
-const buttons: CalcBtn[] = [
-  { label: 'C', type: 'clear', value: 'clear' },
-  { label: '±', type: 'special', value: 'negate' },
-  { label: '%', type: 'special', value: 'percent' },
-  { label: '÷', type: 'operator', value: '/' },
-  { label: '7', type: 'number', value: '7' },
-  { label: '8', type: 'number', value: '8' },
-  { label: '9', type: 'number', value: '9' },
-  { label: '×', type: 'operator', value: '*' },
-  { label: '4', type: 'number', value: '4' },
-  { label: '5', type: 'number', value: '5' },
-  { label: '6', type: 'number', value: '6' },
-  { label: '−', type: 'operator', value: '-' },
-  { label: '1', type: 'number', value: '1' },
-  { label: '2', type: 'number', value: '2' },
-  { label: '3', type: 'number', value: '3' },
-  { label: '+', type: 'operator', value: '+' },
-  { label: '0', type: 'number', value: '0' },
-  { label: '.', type: 'number', value: '.' },
-  { label: '⌫', type: 'special', value: 'backspace' },
-  { label: '=', type: 'equals', value: '=' },
+const modes = [
+  { id: 'basic', label: 'Calc', icon: '🔢' },
+  { id: 'currency', label: 'Currency', icon: '💱' },
+  { id: 'unit', label: 'Unit', icon: '📏' },
+  { id: 'base', label: 'Base', icon: '🔣' },
+  { id: 'loan', label: 'Loan', icon: '🏦' },
+  { id: 'age', label: 'Age', icon: '🎂' },
+  { id: 'date', label: 'Date', icon: '📅' },
 ]
 
-const result = computed(() => lastResult.value || expression.value || '0')
-
-function handleBtn(btn: CalcBtn) {
-  switch (btn.type) {
-    case 'clear':
-      expression.value = ''
-      currentInput.value = ''
-      lastResult.value = ''
-      break
-    case 'number':
-      currentInput.value += btn.value
-      expression.value += btn.value
-      break
-    case 'operator':
-      expression.value += ` ${btn.value} `
-      break
-    case 'special':
-      if (btn.value === 'negate' && currentInput.value) {
-        currentInput.value = String(-parseFloat(currentInput.value))
-        expression.value = currentInput.value
-      } else if (btn.value === 'percent' && currentInput.value) {
-        currentInput.value = String(parseFloat(currentInput.value) / 100)
-        expression.value = currentInput.value
-      } else if (btn.value === 'backspace') {
-        expression.value = expression.value.slice(0, -1)
-        currentInput.value = currentInput.value.slice(0, -1)
-      }
-      break
-    case 'equals':
-      try {
-        const evalExpr = expression.value
-          .replace(/×/g, '*')
-          .replace(/÷/g, '/')
-          .replace(/−/g, '-')
-        // Safe eval using Function constructor
-        const res = new Function(`return (${evalExpr})`)()
-        lastResult.value = formatNumber(res)
-        expression.value = lastResult.value
-        currentInput.value = lastResult.value
-      } catch {
-        lastResult.value = 'Error'
-      }
-      break
-  }
-}
-
-function formatNumber(n: number): string {
-  if (Number.isInteger(n)) return n.toString()
-  return parseFloat(n.toFixed(8)).toString()
-}
+const currentMode = ref('basic')
 </script>
 
 <style scoped>
@@ -117,91 +54,52 @@ function formatNumber(n: number): string {
   flex-direction: column;
   height: 100%;
   background: var(--app-background, var(--bg-tertiary));
+  overflow: hidden;
 }
 
-.calc-display {
-  padding: var(--sp-xl) var(--sp-xl) var(--sp-lg);
-  text-align: right;
-  min-height: 100px;
+.calc-mode-switcher {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  gap: var(--sp-xs);
+  padding: var(--sp-md);
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
 }
 
-.calc-expression {
-  font-size: 1rem;
-  color: var(--app-text-secondary, var(--text-muted));
-  font-family: var(--font-mono);
-  min-height: 1.4em;
-  word-break: break-all;
-}
+.calc-mode-switcher::-webkit-scrollbar { display: none; }
 
-.calc-result {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--app-text, var(--text-primary));
-  font-family: var(--font-mono);
-  word-break: break-all;
-}
-
-.calc-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--sp-sm);
-  padding: 0 var(--sp-md) var(--sp-md);
-}
-
-.calc-btn {
-  height: 56px;
+.mode-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  padding: var(--sp-sm) var(--sp-md);
   border-radius: var(--radius-lg);
-  font-size: 1.2rem;
+  font-size: 0.78rem;
   font-weight: 500;
-  border: none;
-  cursor: pointer;
+  white-space: nowrap;
   background: var(--app-surface, var(--bg-primary));
-  color: var(--app-text, var(--text-primary));
+  color: var(--app-text-secondary, var(--text-muted));
+  border: 1px solid var(--app-border, var(--border-primary));
   transition: all var(--ease-fast);
-  font-family: var(--font-sans);
+  cursor: pointer;
 }
 
-.calc-btn:hover {
-  background: var(--app-surface-hover, var(--bg-hover));
-  transform: scale(1.02);
+.mode-chip:hover {
+  border-color: var(--app-primary, var(--accent-primary));
+  color: var(--app-text, var(--text-primary));
 }
 
-.calc-btn:active {
-  transform: scale(0.98);
-}
-
-.calc-btn-op {
-  background: var(--app-surface-hover, var(--bg-hover));
-  color: var(--app-primary, var(--accent-primary));
-  font-size: 1.4rem;
-}
-
-.calc-btn-op:hover {
+.mode-chip.active {
   background: var(--app-primary, var(--accent-primary));
   color: white;
-}
-
-.calc-btn-eq {
-  background: var(--app-primary, var(--accent-primary));
-  color: white;
-  font-size: 1.4rem;
-}
-
-.calc-btn-eq:hover {
-  background: var(--app-primary-dark, var(--accent-primary-dark));
+  border-color: var(--app-primary, var(--accent-primary));
   box-shadow: var(--shadow-md);
 }
 
-.calc-btn-clear {
-  color: var(--app-error, var(--accent-error));
-  font-weight: 600;
-}
+.mode-icon { font-size: 1rem; }
 
-.calc-btn-special {
-  color: var(--app-text-secondary, var(--text-secondary));
-  font-weight: 600;
+@media (max-width: 480px) {
+  .mode-label.mobile-hidden { display: none; }
+  .mode-chip { padding: var(--sp-sm); }
 }
 </style>
