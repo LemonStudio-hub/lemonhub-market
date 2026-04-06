@@ -20,13 +20,15 @@
       </div>
 
       <div v-if="filteredApps.length > 0" class="app-grid">
-        <AppCard 
-          v-for="(app, index) in filteredApps" 
+        <div
+          v-for="(app, index) in filteredApps"
           :key="app.id"
-          :app="app"
           class="animate-fade-in-up"
           :class="`stagger-${(index % 8) + 1}`"
-        />
+          @click="openApp(app.id)"
+        >
+          <AppCard :app="app" />
+        </div>
       </div>
 
       <div v-else class="empty-state">
@@ -70,51 +72,6 @@ function openApp(id: string) {
   router.push(`/app/${id}`)
 }
 </script>
-
-<template>
-  <div class="home-view">
-    <div class="hero-section">
-      <h1 class="responsive-title">
-        Welcome to <span class="text-gradient">LemonHub</span>
-      </h1>
-      <p class="responsive-subtitle">
-        Discover and manage your applications in one place
-      </p>
-    </div>
-
-    <CategoryFilter />
-
-    <section class="apps-section">
-      <div class="section-header">
-        <h2 class="section-title">
-          {{ hasActiveFilters ? 'Search Results' : 'Featured Applications' }}
-        </h2>
-        <span class="app-count">{{ filteredApps.length }} applications</span>
-      </div>
-
-      <div v-if="filteredApps.length > 0" class="app-grid">
-        <div
-          v-for="(app, index) in filteredApps"
-          :key="app.id"
-          class="animate-fade-in-up"
-          :class="`stagger-${(index % 8) + 1}`"
-          @click="openApp(app.id)"
-        >
-          <AppCard :app="app" />
-        </div>
-      </div>
-
-      <div v-else class="empty-state">
-        <IconSearch :size="48" />
-        <h3 class="empty-title">No applications found</h3>
-        <p>Try adjusting your search or filters</p>
-        <button v-if="hasActiveFilters" class="clear-filters-btn" @click="clearFilters">
-          Clear Filters
-        </button>
-      </div>
-    </section>
-  </div>
-</template>
 
 <style scoped>
 .home-view {
