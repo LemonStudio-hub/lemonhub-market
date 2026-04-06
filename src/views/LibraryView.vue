@@ -8,13 +8,16 @@
     </div>
 
     <div v-if="installedApps.length > 0" class="app-grid">
-      <AppCard 
-        v-for="(app, index) in installedApps" 
+      <div
+        v-for="(app, index) in installedApps"
         :key="app.id"
-        :app="app"
         class="animate-fade-in-up"
         :class="`stagger-${(index % 8) + 1}`"
-      />
+        @click="openApp(app.id)"
+        style="cursor: pointer"
+      >
+        <AppCard :app="app" />
+      </div>
     </div>
 
     <div v-else class="empty-library">
@@ -30,16 +33,22 @@
 
 <script setup lang="ts">
 import { computed, inject } from 'vue'
+import { useRouter } from 'vue-router'
 import { AppStatus } from '@/types'
 import type { LemonHub } from '@/sdk'
 import AppCard from '@/components/cards/AppCard.vue'
 import IconLibrary from '@/components/common/IconLibrary.vue'
 
 const sdk = inject<LemonHub>('sdk')!
+const router = useRouter()
 
 const installedApps = computed(() => {
   return sdk.apps.getAll().filter(app => app.status === AppStatus.INSTALLED)
 })
+
+function openApp(id: string) {
+  router.push(`/app/${id}`)
+}
 </script>
 
 <style scoped>

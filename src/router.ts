@@ -9,6 +9,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Home' },
   },
   {
+    path: '/app/:id',
+    name: 'app-detail',
+    component: () => import('@/views/AppDetailView.vue'),
+    meta: { title: 'App' },
+  },
+  {
     path: '/library',
     name: 'library',
     component: () => import('@/views/LibraryView.vue'),

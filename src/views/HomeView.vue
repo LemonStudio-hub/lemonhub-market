@@ -43,6 +43,7 @@
 
 <script setup lang="ts">
 import { computed, inject } from 'vue'
+import { useRouter } from 'vue-router'
 import { useSearchStore } from '@/stores/search'
 import type { LemonHub } from '@/sdk'
 import AppCard from '@/components/cards/AppCard.vue'
@@ -51,6 +52,7 @@ import IconSearch from '@/components/common/IconSearch.vue'
 
 const sdk = inject<LemonHub>('sdk')!
 const searchStore = useSearchStore()
+const router = useRouter()
 
 const searchQuery = computed(() => searchStore.searchQuery)
 const selectedCategory = computed(() => searchStore.selectedCategory)
@@ -63,7 +65,56 @@ const filteredApps = computed(() => {
 function clearFilters() {
   searchStore.clearFilters()
 }
+
+function openApp(id: string) {
+  router.push(`/app/${id}`)
+}
 </script>
+
+<template>
+  <div class="home-view">
+    <div class="hero-section">
+      <h1 class="responsive-title">
+        Welcome to <span class="text-gradient">LemonHub</span>
+      </h1>
+      <p class="responsive-subtitle">
+        Discover and manage your applications in one place
+      </p>
+    </div>
+
+    <CategoryFilter />
+
+    <section class="apps-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          {{ hasActiveFilters ? 'Search Results' : 'Featured Applications' }}
+        </h2>
+        <span class="app-count">{{ filteredApps.length }} applications</span>
+      </div>
+
+      <div v-if="filteredApps.length > 0" class="app-grid">
+        <div
+          v-for="(app, index) in filteredApps"
+          :key="app.id"
+          class="animate-fade-in-up"
+          :class="`stagger-${(index % 8) + 1}`"
+          @click="openApp(app.id)"
+        >
+          <AppCard :app="app" />
+        </div>
+      </div>
+
+      <div v-else class="empty-state">
+        <IconSearch :size="48" />
+        <h3 class="empty-title">No applications found</h3>
+        <p>Try adjusting your search or filters</p>
+        <button v-if="hasActiveFilters" class="clear-filters-btn" @click="clearFilters">
+          Clear Filters
+        </button>
+      </div>
+    </section>
+  </div>
+</template>
 
 <style scoped>
 .home-view {
@@ -136,5 +187,10 @@ function clearFilters() {
   &:hover {
     background: var(--color-primary-dark);
   }
+}
+
+/* Make cards clickable */
+.app-grid > div {
+  cursor: pointer;
 }
 </style>
