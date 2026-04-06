@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist-sdk",
+    "rootDir": "src/sdk",
+    "isolatedModules": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "lemon-hub": ["./src/sdk/index.ts"],
+      "lemon-hub/*": ["./src/sdk/*"]
+    }
+  },
+  "include": ["src/sdk/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

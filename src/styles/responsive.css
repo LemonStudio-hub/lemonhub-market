@@ -1,0 +1,132 @@
+/* ============================================
+   Responsive Utilities
+   ============================================ */
+
+/* Breakpoints
+   - Mobile: < 640px
+   - Tablet: 640px - 1024px
+   - Desktop: 1024px - 1280px
+   - Wide: >= 1280px
+*/
+
+/* Mobile First Approach */
+.app-grid {
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 640px) {
+  .app-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Responsive Container */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* Responsive Typography */
+.responsive-title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+}
+
+@media (min-width: 640px) {
+  .responsive-title {
+    font-size: var(--text-3xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-title {
+    font-size: var(--text-4xl);
+  }
+}
+
+.responsive-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+@media (min-width: 640px) {
+  .responsive-subtitle {
+    font-size: var(--text-base);
+  }
+}
+
+/* Responsive Padding */
+.responsive-padding {
+  padding: var(--spacing-md);
+}
+
+@media (min-width: 640px) {
+  .responsive-padding {
+    padding: var(--spacing-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-padding {
+    padding: var(--spacing-xl);
+  }
+}
+
+/* Hide/Show Based on Screen Size */
+.mobile-only {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .mobile-only {
+    display: none;
+  }
+}
+
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Responsive Sidebar */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-base), visibility var(--transition-base);
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (min-width: 1024px) {
+  .sidebar-overlay {
+    display: none;
+  }
+}

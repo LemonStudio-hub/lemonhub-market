@@ -1,0 +1,74 @@
+{
+  "name": "@lemonhub/sdk",
+  "version": "0.1.0",
+  "description": "A modern, modular SDK for building application hub platforms with Vue 3",
+  "type": "module",
+  "main": "./dist-sdk/lemon-hub.cjs",
+  "module": "./dist-sdk/lemon-hub.js",
+  "types": "./dist-sdk/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist-sdk/index.d.ts",
+        "default": "./dist-sdk/lemon-hub.js"
+      },
+      "require": {
+        "types": "./dist-sdk/index.d.ts",
+        "default": "./dist-sdk/lemon-hub.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist-sdk",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "build:lib": "vite build --config vite.sdk.config.ts && tsc --project tsconfig.sdk.json",
+    "build:all": "npm run build:lib && npm run build",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build:lib"
+  },
+  "keywords": [
+    "lemonhub",
+    "sdk",
+    "vue",
+    "vue3",
+    "app-center",
+    "hub",
+    "plugin",
+    "typescript"
+  ],
+  "author": "LemonHub Team",
+  "license": "MIT",
+  "homepage": "https://github.com/LemonStudio-hub/lemonhub-market#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LemonStudio-hub/lemonhub-market.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LemonStudio-hub/lemonhub-market/issues"
+  },
+  "peerDependencies": {
+    "vue": ">=3.3.0",
+    "vue-router": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vue-router": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vue/tsconfig": "^0.9.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.4",
+    "vue": "^3.5.32",
+    "vue-router": "^4.6.4",
+    "vue-tsc": "^3.2.6"
+  }
+}
