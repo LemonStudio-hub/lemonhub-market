@@ -1,5 +1,5 @@
-import { LemonHub } from '@lemonhub/sdk'
-import type { AppInfo } from '@lemonhub/sdk'
+import { LemonHub } from '@/sdk'
+import type { AppInfo } from '@/sdk'
 
 /**
  * Register an app via the SDK
